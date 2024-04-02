@@ -6,14 +6,16 @@
 ##
 
 CC = gcc
-CFLAGS = -W -Wall -Wextra -Wpedantic -Iinclude
+CFLAGS = -W -Wall -Wextra -Wpedantic -Iinclude -lm
 EXECNAME = ai
 
 RED = \033[0;31m
 GREEN = \033[0;32m
 NO_COLOR = \033[0m
 
-SRCS = ./src/main.c
+SRCS = ./src/main.c \
+	   ./src/utils.c \
+	   ./src/ai.c
 OBJS = $(SRCS:./src/%.c=./obj/%.o)
 OBJDIR = obj
 

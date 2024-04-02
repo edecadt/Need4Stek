@@ -8,39 +8,44 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
+#include "n4s.h"
 
-char *write_command(const char *command, bool need_output)
+static void init_ai(ai_t *ai)
 {
-    char *line = NULL;
-    size_t len = 0;
-    ssize_t read;
+    ai->data = write_command("START_SIMULATION", true);
+    if (ai->data == NULL || atoi(ai->data) != 1) {
+        free(ai->data);
+        my_print(RED"Error: Couldn't start the simulation\n");
+        exit(EXIT_ERROR);
+    }
+    ai->is_running = true;
+    ai->car.speed = DEFAULT_SPEED;
+    ai->car.direction = 0.0;
+    my_print(GREEN"Simulation started\n");
+}
 
-    write(1, command, strlen(command));
-    write(1, "\n", 1);
-    read = getline(&line, &len, stdin);
-    if (read == -1) {
-        free(line);
-        return NULL;
-    }
-    if (!need_output) {
-        free(line);
-        return NULL;
-    }
-    return line;
+static void destroy_ai(ai_t *ai)
+{
+    free(ai->data);
+    my_print(GREEN"Simulation stopped\n");
 }
 
 int main(void)
 {
-    write_command("START_SIMULATION", false);
-    write_command("CAR_FORWARD:0.5", false);
-    while (1) {
-        char *line = write_command("GET_INFO_LIDAR", true);
-        if (line == NULL)
+    ai_t ai;
+
+    init_ai(&ai);
+    while (ai.is_running) {
+        ai.data = write_command("GET_INFO_LIDAR", true);
+        if (ai.data == NULL) {
+            ai.is_running = false;
+            my_print(RED"Error: Couldn't get the lidar info\n");
             break;
-        dprintf(2, "%s", line);
-        free(line);
+        }
+        ai.distance = lidar_info(ai.data);
+        process_ai(&ai);
     }
-    return (0);
+    destroy_ai(&ai);
+    return EXIT_SUCCESS;
 }
