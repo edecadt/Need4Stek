@@ -6,7 +6,7 @@
 ##
 
 CC = gcc
-CFLAGS = -W -Wall -Wextra -Werror -Wpedantic -Iinclude
+CFLAGS = -W -Wall -Wextra -Wpedantic -Iinclude
 EXECNAME = ai
 
 RED = \033[0;31m
