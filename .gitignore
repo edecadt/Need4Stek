@@ -1,0 +1,13 @@
+cmake-build-debug/
+CMakeLists.txt
+*.o
+*.a
+.idea
+build/
+vgcore*
+obj/
+ai
+n4s
+n4s_buffer
+pipes.sh
+scene
