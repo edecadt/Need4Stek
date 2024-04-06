@@ -60,5 +60,7 @@ char *write_command(const char *command, const bool need_output);
 void my_print(char *str);
 float *lidar_info(char *data);
 void process_ai(ai_t *ai);
+char **my_str_to_word_array(char *str, const char *separator);
+void check_end(ai_t *ai);
 
 #endif //N4S_H

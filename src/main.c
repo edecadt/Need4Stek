@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include "n4s.h"
 
@@ -28,7 +29,19 @@ static void init_ai(ai_t *ai)
 static void destroy_ai(ai_t *ai)
 {
     free(ai->data);
-    my_print(GREEN"Simulation stopped\n");
+}
+
+void check_end(ai_t *ai)
+{
+    char *end = strrchr(ai->data, ':') + 2;
+    if (strcmp(end, "No further info\n") == 0) {
+        return;
+    }
+    if (atoi(end + 1) == -1) {
+        ai->data = write_command("STOP_SIMULATION", true);
+        fprintf(stderr, "%s", ai->data);
+        ai->is_running = false;
+    }
 }
 
 int main(void)
@@ -38,11 +51,7 @@ int main(void)
     init_ai(&ai);
     while (ai.is_running) {
         ai.data = write_command("GET_INFO_LIDAR", true);
-        if (ai.data == NULL) {
-            ai.is_running = false;
-            my_print(RED"Error: Couldn't get the lidar info\n");
-            break;
-        }
+        check_end(&ai);
         ai.distance = lidar_info(ai.data);
         process_ai(&ai);
     }

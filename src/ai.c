@@ -9,21 +9,23 @@
 #include <stdlib.h>
 #include "n4s.h"
 
-void moove_forward(const float speed)
+void moove_forward(ai_t *ai, const float speed)
 {
     char *str = malloc(sizeof(char) * 50);
 
     snprintf(str, 50, "CAR_FORWARD:%f", speed);
-    write_command(str, true);
+    ai->data = write_command(str, true);
+    check_end(ai);
     free(str);
 }
 
-void mooove_backward(const float speed)
+void mooove_backward(ai_t *ai, const float speed)
 {
     char *str = malloc(sizeof(char) * 50);
 
     snprintf(str, 50, "CAR_BACKWARDS:%f", speed);
-    write_command(str, false);
+    ai->data = write_command(str, true);
+    check_end(ai);
     free(str);
 }
 
@@ -40,11 +42,12 @@ void turn_wheels(ai_t *ai, double factor)
         }
     }
     if (angle > 0.1)
-        ai->car.speed = 0.4;
+        ai->car.speed = 0.2;
     else
         ai->car.speed = DEFAULT_SPEED;
     snprintf(str, sizeof(str), "WHEELS_DIR:%f", angle * factor);
-    write_command(str, false);
+    ai->data = write_command(str, true);
+    check_end(ai);
 }
 
 void process_ai(ai_t *ai)
@@ -61,7 +64,7 @@ void process_ai(ai_t *ai)
             turn_wheels(ai, TURN_LEFT);
         else
             turn_wheels(ai, TURN_RIGHT);
-        mooove_backward(ai->car.speed);
+        mooove_backward(ai, ai->car.speed);
     } else
-        moove_forward(ai->car.speed);
+        moove_forward(ai, ai->car.speed);
 }

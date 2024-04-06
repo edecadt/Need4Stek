@@ -15,7 +15,8 @@ NO_COLOR = \033[0m
 
 SRCS = ./src/main.c \
 	   ./src/utils.c \
-	   ./src/ai.c
+	   ./src/ai.c \
+	   ./src/my_str_to_word_array.c
 OBJS = $(SRCS:./src/%.c=./obj/%.o)
 OBJDIR = obj
 
